@@ -42,16 +42,24 @@
 <model-viewer
   src="food.glb"
   ar
-  ar-modes="scene-viewer"
+  ar-modes="scene-viewer webxr quick-look"
   camera-controls
   ar-placement="floor"
-  ar-scale="fixed">
-
-  <!-- CUSTOM BIG AR BUTTON -->
-  <button slot="ar-button" id="ar-button">
-  </button>
-
+  ar-scale="fixed"
+  style="width:100vw; height:100vh;">
 </model-viewer>
+
+<style>
+/* Enlarge the default AR button */
+model-viewer::part(ar-button) {
+  width: auto;
+  height: auto;
+  padding: 16px 28px;
+  font-size: 18px;
+  border-radius: 12px;
+}
+</style>
+
 
 </body>
 </html>
