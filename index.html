@@ -7,17 +7,50 @@
   <script type="module"
     src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
   </script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    model-viewer {
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* BIG AR BUTTON */
+    #ar-button {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 16px 28px;
+      background: black;
+      color: white;
+      font-size: 18px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      z-index: 10;
+    }
+  </style>
 </head>
-<body style="margin:0;">
+
+<body>
 
 <model-viewer
   src="food.glb"
   ar
-  ar-modes="scene-viewer webxr quick-look"
+  ar-modes="scene-viewer"
   camera-controls
-  ar-placement="table"
-  ar-scale="fixed"
-  style="width:100vw; height:100vh;">
+  ar-placement="floor"
+  ar-scale="fixed">
+
+  <!-- CUSTOM BIG AR BUTTON -->
+  <button slot="ar-button" id="ar-button">
+  </button>
+
 </model-viewer>
 
 </body>
