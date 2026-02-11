@@ -2,51 +2,190 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>AR Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>View in AR</title>
 
   <!-- Model Viewer -->
-  <script type="module"
-    src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
-  </script>
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 
   <style>
-    body {
+    * {
       margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .header {
+      text-align: center;
+      padding: 20px;
+      color: white;
+    }
+
+    .header h1 {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+
+    .header p {
+      font-size: 14px;
+      opacity: 0.8;
+    }
+
+    .viewer-container {
+      width: 100%;
+      max-width: 500px;
+      aspect-ratio: 1;
+      background: radial-gradient(circle, #2a2a4a 0%, #1a1a2e 100%);
+      border-radius: 20px;
       overflow: hidden;
-      font-family: Arial, sans-serif;
-      background: white;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      margin: 10px 20px;
     }
 
     model-viewer {
-      width: 100vw;
-      height: 100vh;
+      width: 100%;
+      height: 100%;
+      --poster-color: transparent;
     }
 
-    /* BIG CLEAR AR BUTTON */
-    model-viewer::part(ar-button) {
-      background: black;
+    /* Hide default AR button - we'll use custom one */
+    model-viewer::part(default-ar-button) {
+      display: none;
+    }
+
+    .ar-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
-      padding: 16px 28px;
-      font-size: 18px;
-      border-radius: 12px;
       border: none;
+      padding: 18px 36px;
+      font-size: 18px;
+      font-weight: 600;
+      border-radius: 50px;
+      cursor: pointer;
+      margin: 24px;
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .ar-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
+    }
+
+    .ar-button:active {
+      transform: translateY(0);
+    }
+
+    .ar-button svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .ar-not-supported {
+      display: none;
+      background: #ff6b6b;
+      color: white;
+      padding: 16px 24px;
+      border-radius: 12px;
+      margin: 20px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .instructions {
+      color: rgba(255,255,255,0.6);
+      font-size: 12px;
+      text-align: center;
+      padding: 0 20px 20px;
+    }
+
+    /* Hotspot for annotations (optional) */
+    .hotspot {
+      background: white;
+      border-radius: 20px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
   </style>
 </head>
 
 <body>
 
-<model-viewer
-  src="food.glb"
-  ar
-  ar-modes="scene-viewer webxr quick-look"
-  camera-controls
-  auto-rotate
-  shadow-intensity="1"
-  environment-image="neutral"
-  exposure="1"
->
-</model-viewer>
+  <div class="header">
+    <h1>🍔 Deluxe Burger</h1>
+    <p>Tap & drag to rotate • Pinch to zoom</p>
+  </div>
+
+  <div class="viewer-container">
+    <model-viewer
+      id="viewer"
+      src="food.glb"
+      ar
+      ar-modes="scene-viewer webxr quick-look"
+      camera-controls
+      auto-rotate
+      shadow-intensity="1"
+      environment-image="neutral"
+      exposure="1.2"
+      camera-orbit="45deg 75deg 2m"
+      min-camera-orbit="auto auto 1m"
+      max-camera-orbit="auto auto 4m"
+    >
+    </model-viewer>
+  </div>
+
+  <button class="ar-button" id="arButton">
+    <svg viewBox="0 0 24 24" fill="currentColor">
+      <path d="M3 4c0-.55.45-1 1-1h2V1H4C2.35 1 1 2.35 1 4v2h2V4zm0 16v-2H1v2c0 1.65 1.35 3 3 3h2v-2H4c-.55 0-1-.45-1-1zm18-16V4c0-.55-.45-1-1-1h-2V1h2c1.65 0 3 1.35 3 3v2h-2zm0 16c0 .55-.45 1-1 1h-2v2h2c1.65 0 3-1.35 3-3v-2h-2v2z"/>
+      <path d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"/>
+    </svg>
+    View in Your Space
+  </button>
+
+  <div class="ar-not-supported" id="arNotSupported">
+    📱 Open this page on your phone to view in AR!
+  </div>
+
+  <p class="instructions">
+    Point your camera at a flat surface to place the model
+  </p>
+
+  <script>
+    const modelViewer = document.getElementById('viewer');
+    const arButton = document.getElementById('arButton');
+    const arNotSupported = document.getElementById('arNotSupported');
+
+    // Check AR support
+    modelViewer.addEventListener('load', () => {
+      if (modelViewer.canActivateAR) {
+        arButton.style.display = 'flex';
+        arNotSupported.style.display = 'none';
+      } else {
+        arButton.style.display = 'none';
+        arNotSupported.style.display = 'block';
+      }
+    });
+
+    // Custom AR button click
+    arButton.addEventListener('click', () => {
+      modelViewer.activateAR();
+    });
+  </script>
 
 </body>
 </html>
