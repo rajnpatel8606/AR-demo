@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AR Test</title>
+  <title>View in AR</title>
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 
   <style>
@@ -16,36 +16,39 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+    }
+
+    .header {
+      text-align: center;
       padding: 20px;
-    }
-
-    h1 {
       color: white;
-      font-size: 22px;
-      margin-bottom: 10px;
-      text-align: center;
     }
 
-    p {
-      color: rgba(255,255,255,0.7);
+    .header h1 {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+
+    .header p {
       font-size: 14px;
-      margin-bottom: 20px;
-      text-align: center;
+      opacity: 0.8;
     }
 
     .viewer-container {
       width: 100%;
-      max-width: 400px;
+      max-width: 500px;
       aspect-ratio: 1;
-      background: #2a2a4a;
-      border-radius: 16px;
+      background: radial-gradient(circle, #2a2a4a 0%, #1a1a2e 100%);
+      border-radius: 20px;
       overflow: hidden;
-      margin-bottom: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      margin: 10px 20px;
     }
 
     model-viewer {
       width: 100%;
       height: 100%;
+      --poster-color: transparent;
     }
 
     model-viewer::part(default-ar-button) {
@@ -56,49 +59,44 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
-      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      gap: 12px;
+      background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
       color: white;
       border: none;
-      padding: 16px 32px;
-      font-size: 16px;
+      padding: 18px 36px;
+      font-size: 18px;
       font-weight: 600;
       border-radius: 50px;
       cursor: pointer;
-      margin-bottom: 15px;
+      margin: 24px;
+      box-shadow: 0 10px 30px rgba(255, 107, 53, 0.4);
     }
 
-    .model-switch {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
+    .ar-button:active {
+      transform: scale(0.98);
     }
 
-    .model-switch button {
-      background: rgba(255,255,255,0.1);
-      color: white;
-      border: 2px solid rgba(255,255,255,0.3);
-      padding: 10px 16px;
-      border-radius: 8px;
-      font-size: 14px;
-      cursor: pointer;
+    .ar-button svg {
+      width: 24px;
+      height: 24px;
     }
 
-    .model-switch button.active {
-      background: #667eea;
-      border-color: #667eea;
+    .instructions {
+      color: rgba(255,255,255,0.6);
+      font-size: 13px;
+      text-align: center;
+      padding: 0 20px 30px;
     }
 
     .status {
-      background: rgba(0,0,0,0.5);
       color: white;
-      padding: 15px;
+      padding: 12px 20px;
       border-radius: 10px;
-      font-size: 13px;
-      max-width: 100%;
+      margin: 10px;
+      font-size: 14px;
       text-align: center;
     }
-
+    .status.loading { background: #3498db; }
     .status.success { background: #27ae60; }
     .status.error { background: #e74c3c; }
   </style>
@@ -106,12 +104,9 @@
 
 <body>
 
-  <h1>🧪 AR Test Page</h1>
-  <p>Test with Google's model first, then try your burger</p>
-
-  <div class="model-switch">
-    <button id="btnGoogle" class="active" onclick="switchModel('google')">✅ Google Chair</button>
-    <button id="btnBurger" onclick="switchModel('burger')">🍔 Your Burger</button>
+  <div class="header">
+    <h1>🍔 Deluxe Burger</h1>
+    <p>Tap & drag to rotate • Pinch to zoom</p>
   </div>
 
   <div class="viewer-container">
@@ -124,71 +119,53 @@
       auto-rotate
       shadow-intensity="1"
       environment-image="neutral"
-      exposure="1"
+      exposure="1.2"
+      ar-scale="fixed"
     >
     </model-viewer>
   </div>
 
   <button class="ar-button" id="arButton">
-    📱 View in AR
+    <svg viewBox="0 0 24 24" fill="currentColor">
+      <path d="M3 4c0-.55.45-1 1-1h2V1H4C2.35 1 1 2.35 1 4v2h2V4zm0 16v-2H1v2c0 1.65 1.35 3 3 3h2v-2H4c-.55 0-1-.45-1-1zm18-16V4c0-.55-.45-1-1-1h-2V1h2c1.65 0 3 1.35 3 3v2h-2zm0 16c0 .55-.45 1-1 1h-2v2h2c1.65 0 3-1.35 3-3v-2h-2v2z"/>
+      <path d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"/>
+    </svg>
+    View in Your Space
   </button>
 
-  <div class="status" id="status">
-    Loading model...
-  </div>
+  <div id="status" class="status loading">Loading 3D model...</div>
+
+  <p class="instructions">
+    Point your camera at a flat surface like a table to place the model
+  </p>
 
   <script>
     const modelViewer = document.getElementById('viewer');
     const arButton = document.getElementById('arButton');
     const status = document.getElementById('status');
-    const btnGoogle = document.getElementById('btnGoogle');
-    const btnBurger = document.getElementById('btnBurger');
-
-    // Known working models for testing
-    const models = {
-      google: 'https://modelviewer.dev/shared-assets/models/Astronaut.glb',
-      burger: 'food.glb'
-    };
-
-    let currentModel = 'google';
-
-    function switchModel(type) {
-      currentModel = type;
-      modelViewer.src = models[type];
-      
-      btnGoogle.classList.toggle('active', type === 'google');
-      btnBurger.classList.toggle('active', type === 'burger');
-      
-      status.textContent = 'Loading ' + (type === 'google' ? 'Google Astronaut' : 'Your Burger') + '...';
-      status.className = 'status';
-    }
 
     modelViewer.addEventListener('load', () => {
-      status.textContent = '✅ Model loaded! Tap "View in AR" to test.';
+      status.textContent = '✅ Ready! Tap the button to view in AR';
       status.className = 'status success';
     });
 
-    modelViewer.addEventListener('error', (e) => {
-      status.textContent = '❌ Failed to load model. File might be missing or corrupted.';
+    modelViewer.addEventListener('error', () => {
+      status.textContent = '❌ Error loading model';
       status.className = 'status error';
     });
 
     modelViewer.addEventListener('ar-status', (e) => {
       if (e.detail.status === 'failed') {
-        status.textContent = '❌ AR failed! Check ARCore is installed & camera permission granted.';
+        status.textContent = '❌ AR failed - check camera permission';
         status.className = 'status error';
-      } else if (e.detail.status === 'session-started') {
-        status.textContent = '✅ AR is working!';
-        status.className = 'status success';
       }
     });
 
     arButton.addEventListener('click', () => {
       if (modelViewer.canActivateAR) {
-        status.textContent = 'Opening AR...';
         modelViewer.activateAR();
       } else {
-        status.textContent = '❌ AR not supported. Make sure you\'re using Chrome.';
+        status.textContent = '❌ Open in Chrome on Android or Safari on iPhone';
         status.className = 'status error';
       }
     });
