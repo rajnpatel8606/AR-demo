@@ -14,94 +14,70 @@
     }
 
     body {
-      background: #000;
+      background: #111;
       font-family: Arial, sans-serif;
       min-height: 100vh;
-    }
-
-    .container {
       display: flex;
       flex-direction: column;
-      height: 100vh;
     }
 
     model-viewer {
       width: 100%;
       flex: 1;
-    }
-
-    /* Hide default button - we use custom */
-    model-viewer::part(default-ar-button) {
-      display: none;
+      min-height: 60vh;
     }
 
     .bottom-section {
-      background: #111;
+      background: #1a1a1a;
       padding: 20px;
       text-align: center;
     }
 
     .ar-btn {
+      display: inline-block;
       background: #ff6b35;
       color: white;
-      border: none;
+      text-decoration: none;
       padding: 18px 40px;
       font-size: 18px;
       font-weight: bold;
       border-radius: 50px;
-      width: 100%;
-      max-width: 300px;
+      border: none;
+      cursor: pointer;
     }
 
     .debug {
       color: #666;
-      font-size: 12px;
+      font-size: 11px;
       margin-top: 15px;
+      word-break: break-all;
     }
   </style>
 </head>
 
 <body>
 
-  <div class="container">
-    <model-viewer
-      id="viewer"
-      src="https://modelviewer.dev/shared-assets/models/Astronaut.glb"
-      ar
-      ar-modes="scene-viewer webxr quick-look"
-      camera-controls
-      auto-rotate
-      shadow-intensity="1"
+  <model-viewer
+    id="viewer"
+    src="https://modelviewer.dev/shared-assets/models/Astronaut.glb"
+    camera-controls
+    auto-rotate
+    shadow-intensity="1"
+  >
+  </model-viewer>
+
+  <div class="bottom-section">
+    <!-- Direct link to Scene Viewer for Android -->
+    <a 
+      class="ar-btn" 
+      id="arLink"
+      href="intent://arvr.google.com/scene-viewer/1.0?file=https://modelviewer.dev/shared-assets/models/Astronaut.glb&mode=ar_only#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=https://modelviewer.dev/;end;"
     >
-    </model-viewer>
-
-    <div class="bottom-section">
-      <button class="ar-btn" id="arBtn">👆 View in Your Space</button>
-      <div class="debug" id="debug">Loading...</div>
-    </div>
+      👆 View in Your Space
+    </a>
+    
+    <div class="debug" id="debug">Direct Scene Viewer Link (Android)</div>
   </div>
-
-  <script>
-    const viewer = document.getElementById('viewer');
-    const btn = document.getElementById('arBtn');
-    const debug = document.getElementById('debug');
-
-    viewer.addEventListener('load', () => {
-      debug.textContent = 'Model loaded ✓ | AR: ' + (viewer.canActivateAR ? 'Yes ✓' : 'No ✗');
-    });
-
-    viewer.addEventListener('error', () => {
-      debug.textContent = 'Error loading model!';
-    });
-
-    btn.addEventListener('click', () => {
-      if (viewer.canActivateAR) {
-        viewer.activateAR();
-      } else {
-        alert('AR not available. Use Chrome browser.');
-      }
-    });
-  </script>
 
 </body>
 </html>
