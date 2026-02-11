@@ -3,17 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>View in AR</title>
-
-  <!-- Model Viewer -->
+  <title>AR Test</title>
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: 'Segoe UI', Arial, sans-serif;
@@ -22,42 +16,38 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-    }
-
-    .header {
-      text-align: center;
       padding: 20px;
+    }
+
+    h1 {
       color: white;
+      font-size: 22px;
+      margin-bottom: 10px;
+      text-align: center;
     }
 
-    .header h1 {
-      font-size: 24px;
-      margin-bottom: 8px;
-    }
-
-    .header p {
+    p {
+      color: rgba(255,255,255,0.7);
       font-size: 14px;
-      opacity: 0.8;
+      margin-bottom: 20px;
+      text-align: center;
     }
 
     .viewer-container {
       width: 100%;
-      max-width: 500px;
+      max-width: 400px;
       aspect-ratio: 1;
-      background: radial-gradient(circle, #2a2a4a 0%, #1a1a2e 100%);
-      border-radius: 20px;
+      background: #2a2a4a;
+      border-radius: 16px;
       overflow: hidden;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-      margin: 10px 20px;
+      margin-bottom: 20px;
     }
 
     model-viewer {
       width: 100%;
       height: 100%;
-      --poster-color: transparent;
     }
 
-    /* Hide default AR button */
     model-viewer::part(default-ar-button) {
       display: none;
     }
@@ -66,242 +56,142 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 12px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      gap: 10px;
+      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
       color: white;
       border: none;
-      padding: 18px 36px;
-      font-size: 18px;
+      padding: 16px 32px;
+      font-size: 16px;
       font-weight: 600;
       border-radius: 50px;
       cursor: pointer;
-      margin: 24px;
-      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
-      transition: transform 0.2s, box-shadow 0.2s;
+      margin-bottom: 15px;
     }
 
-    .ar-button:hover {
-      transform: translateY(-2px);
+    .model-switch {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
     }
 
-    .ar-button:active {
-      transform: translateY(0);
-    }
-
-    .ar-button svg {
-      width: 24px;
-      height: 24px;
-    }
-
-    .status-message {
+    .model-switch button {
+      background: rgba(255,255,255,0.1);
       color: white;
-      padding: 16px 24px;
-      border-radius: 12px;
-      margin: 10px 20px;
-      text-align: center;
-      font-size: 14px;
-      max-width: 90%;
-    }
-
-    .status-message.error { background: #e74c3c; }
-    .status-message.warning { background: #f39c12; }
-    .status-message.info { background: #3498db; }
-    .status-message.success { background: #27ae60; }
-
-    .instructions {
-      color: rgba(255,255,255,0.6);
-      font-size: 12px;
-      text-align: center;
-      padding: 0 20px 20px;
-    }
-
-    .debug-info {
-      background: rgba(0,0,0,0.7);
-      color: #0f0;
-      font-family: monospace;
-      font-size: 12px;
-      padding: 15px;
-      margin: 10px 20px;
+      border: 2px solid rgba(255,255,255,0.3);
+      padding: 10px 16px;
       border-radius: 8px;
-      max-width: 90%;
-      line-height: 1.6;
+      font-size: 14px;
+      cursor: pointer;
     }
 
-    .debug-info .label {
-      color: #888;
+    .model-switch button.active {
+      background: #667eea;
+      border-color: #667eea;
     }
+
+    .status {
+      background: rgba(0,0,0,0.5);
+      color: white;
+      padding: 15px;
+      border-radius: 10px;
+      font-size: 13px;
+      max-width: 100%;
+      text-align: center;
+    }
+
+    .status.success { background: #27ae60; }
+    .status.error { background: #e74c3c; }
   </style>
 </head>
 
 <body>
 
-  <div class="header">
-    <h1>🍔 Deluxe Burger</h1>
-    <p>Tap & drag to rotate • Pinch to zoom</p>
+  <h1>🧪 AR Test Page</h1>
+  <p>Test with Google's model first, then try your burger</p>
+
+  <div class="model-switch">
+    <button id="btnGoogle" class="active" onclick="switchModel('google')">✅ Google Chair</button>
+    <button id="btnBurger" onclick="switchModel('burger')">🍔 Your Burger</button>
   </div>
 
   <div class="viewer-container">
     <model-viewer
       id="viewer"
-      src="food.glb"
+      src="https://modelviewer.dev/shared-assets/models/Astronaut.glb"
       ar
-      ar-modes="webxr scene-viewer quick-look"
+      ar-modes="scene-viewer webxr quick-look"
       camera-controls
       auto-rotate
       shadow-intensity="1"
       environment-image="neutral"
-      exposure="1.2"
-      camera-orbit="45deg 75deg 2m"
-      min-camera-orbit="auto auto 1m"
-      max-camera-orbit="auto auto 4m"
+      exposure="1"
     >
     </model-viewer>
   </div>
 
   <button class="ar-button" id="arButton">
-    <svg viewBox="0 0 24 24" fill="currentColor">
-      <path d="M3 4c0-.55.45-1 1-1h2V1H4C2.35 1 1 2.35 1 4v2h2V4zm0 16v-2H1v2c0 1.65 1.35 3 3 3h2v-2H4c-.55 0-1-.45-1-1zm18-16V4c0-.55-.45-1-1-1h-2V1h2c1.65 0 3 1.35 3 3v2h-2zm0 16c0 .55-.45 1-1 1h-2v2h2c1.65 0 3-1.35 3-3v-2h-2v2z"/>
-      <path d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"/>
-    </svg>
-    View in Your Space
+    📱 View in AR
   </button>
 
-  <div id="statusMessage" class="status-message info" style="display:none;"></div>
-
-  <p class="instructions">
-    Point your camera at a flat surface to place the model
-  </p>
-
-  <!-- Debug Panel - tells us what's happening -->
-  <div class="debug-info" id="debugInfo">
-    ⏳ Loading...
+  <div class="status" id="status">
+    Loading model...
   </div>
 
   <script>
     const modelViewer = document.getElementById('viewer');
     const arButton = document.getElementById('arButton');
-    const statusMessage = document.getElementById('statusMessage');
-    const debugInfo = document.getElementById('debugInfo');
+    const status = document.getElementById('status');
+    const btnGoogle = document.getElementById('btnGoogle');
+    const btnBurger = document.getElementById('btnBurger');
 
-    function showStatus(message, type = 'info') {
-      statusMessage.textContent = message;
-      statusMessage.className = 'status-message ' + type;
-      statusMessage.style.display = 'block';
+    // Known working models for testing
+    const models = {
+      google: 'https://modelviewer.dev/shared-assets/models/Astronaut.glb',
+      burger: 'food.glb'
+    };
+
+    let currentModel = 'google';
+
+    function switchModel(type) {
+      currentModel = type;
+      modelViewer.src = models[type];
+      
+      btnGoogle.classList.toggle('active', type === 'google');
+      btnBurger.classList.toggle('active', type === 'burger');
+      
+      status.textContent = 'Loading ' + (type === 'google' ? 'Google Astronaut' : 'Your Burger') + '...';
+      status.className = 'status';
     }
 
-    function getDeviceInfo() {
-      const ua = navigator.userAgent;
-      if (/iPhone|iPad|iPod/.test(ua)) return 'iOS';
-      if (/Android/.test(ua)) return 'Android';
-      return 'Desktop/Other';
-    }
-
-    function getBrowserInfo() {
-      const ua = navigator.userAgent;
-      if (/CriOS/.test(ua)) return 'Chrome on iOS';
-      if (/FxiOS/.test(ua)) return 'Firefox on iOS';
-      if (/Safari/.test(ua) && !/Chrome/.test(ua)) return 'Safari';
-      if (/Chrome/.test(ua)) return 'Chrome';
-      if (/Firefox/.test(ua)) return 'Firefox';
-      return 'Unknown';
-    }
-
-    function updateDebug(extra = '') {
-      const device = getDeviceInfo();
-      const browser = getBrowserInfo();
-      const arSupport = modelViewer.canActivateAR;
-      const isHTTPS = location.protocol === 'https:';
-      const modelLoaded = modelViewer.loaded;
-
-      let html = `
-        <div><span class="label">Protocol:</span> ${isHTTPS ? '✅ HTTPS' : '❌ HTTP (AR needs HTTPS!)'}</div>
-        <div><span class="label">Device:</span> ${device}</div>
-        <div><span class="label">Browser:</span> ${browser}</div>
-        <div><span class="label">Model:</span> ${modelLoaded ? '✅ Loaded' : '⏳ Loading...'}</div>
-        <div><span class="label">AR Support:</span> ${arSupport ? '✅ Yes' : '❌ No'}</div>
-      `;
-
-      // Device-specific tips
-      if (device === 'iOS' && browser === 'Chrome on iOS') {
-        html += `<div style="color:#ffa502;">⚠️ Use Safari for AR on iPhone!</div>`;
-      }
-      if (device === 'Android' && browser !== 'Chrome') {
-        html += `<div style="color:#ffa502;">⚠️ Use Chrome for AR on Android!</div>`;
-      }
-      if (!isHTTPS) {
-        html += `<div style="color:#ff6b6b;">❌ AR requires HTTPS!</div>`;
-      }
-
-      if (extra) {
-        html += `<div style="color:#ff6b6b; margin-top:8px;">${extra}</div>`;
-      }
-
-      debugInfo.innerHTML = html;
-    }
-
-    // When model loads
     modelViewer.addEventListener('load', () => {
-      console.log('Model loaded');
-      updateDebug();
+      status.textContent = '✅ Model loaded! Tap "View in AR" to test.';
+      status.className = 'status success';
     });
 
-    // AR status changes
-    modelViewer.addEventListener('ar-status', (event) => {
-      const status = event.detail.status;
-      console.log('AR Status:', status);
-      
-      if (status === 'failed') {
-        showStatus('❌ AR failed. Check camera permissions & pop-up blocker.', 'error');
-        updateDebug('AR Status: FAILED');
-      } else if (status === 'session-started') {
-        showStatus('✅ AR Started!', 'success');
-      } else if (status === 'not-presenting') {
-        updateDebug('AR Status: Not presenting');
+    modelViewer.addEventListener('error', (e) => {
+      status.textContent = '❌ Failed to load model. File might be missing or corrupted.';
+      status.className = 'status error';
+    });
+
+    modelViewer.addEventListener('ar-status', (e) => {
+      if (e.detail.status === 'failed') {
+        status.textContent = '❌ AR failed! Check ARCore is installed & camera permission granted.';
+        status.className = 'status error';
+      } else if (e.detail.status === 'session-started') {
+        status.textContent = '✅ AR is working!';
+        status.className = 'status success';
       }
     });
 
-    // Model errors
-    modelViewer.addEventListener('error', (event) => {
-      console.error('Error:', event);
-      showStatus('❌ Error loading model', 'error');
-      updateDebug('Model Error: ' + (event.detail?.message || 'Unknown'));
-    });
-
-    // AR Button click
     arButton.addEventListener('click', () => {
-      updateDebug();
-      
-      if (!modelViewer.canActivateAR) {
-        const device = getDeviceInfo();
-        const browser = getBrowserInfo();
-        
-        let msg = 'AR not available. ';
-        if (device === 'iOS' && browser !== 'Safari') {
-          msg += 'Please open in Safari.';
-        } else if (device === 'Android' && browser !== 'Chrome') {
-          msg += 'Please open in Chrome.';
-        } else if (device === 'Desktop/Other') {
-          msg += 'Open this page on your phone.';
-        } else {
-          msg += 'Check browser permissions.';
-        }
-        
-        showStatus(msg, 'warning');
-        return;
-      }
-      
-      showStatus('Opening AR... Allow camera if prompted.', 'info');
-      
-      try {
+      if (modelViewer.canActivateAR) {
+        status.textContent = 'Opening AR...';
         modelViewer.activateAR();
-      } catch (e) {
-        showStatus('❌ ' + e.message, 'error');
-        updateDebug('Error: ' + e.message);
+      } else {
+        status.textContent = '❌ AR not supported. Make sure you\'re using Chrome.';
+        status.className = 'status error';
       }
     });
-
-    // Initial check after short delay
-    setTimeout(updateDebug, 1500);
   </script>
 
 </body>
