@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AR Menu</title>
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #111;
+      font-family: Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    model-viewer {
+      width: 100%;
+      flex: 1;
+      min-height: 60vh;
+    }
+
+    .bottom-section {
+      background: #1a1a1a;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .ar-btn {
+      display: inline-block;
+      background: #ff6b35;
+      color: white;
+      text-decoration: none;
+      padding: 18px 40px;
+      font-size: 18px;
+      font-weight: bold;
+      border-radius: 50px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .debug {
+      color: #666;
+      font-size: 11px;
+      margin-top: 15px;
+      word-break: break-all;
+    }
+  </style>
+</head>
+
+<body>
+
+  <model-viewer
+    id="viewer"
+    src="https://modelviewer.dev/shared-assets/models/Astronaut.glb"
+    camera-controls
+    auto-rotate
+    shadow-intensity="1"
+  >
+  </model-viewer>
+
+  <div class="bottom-section">
+    <!-- Direct link to Scene Viewer for Android -->
+    <a 
+      class="ar-btn" 
+      id="arLink"
+      href="intent://arvr.google.com/scene-viewer/1.0?file=https://modelviewer.dev/shared-assets/models/Astronaut.glb&mode=ar_only#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=https://modelviewer.dev/;end;"
+    >
+      👆 View in Your Space
+    </a>
+    
+    <div class="debug" id="debug">Direct Scene Viewer Link (Android)</div>
+  </div>
+
+</body>
+</html>
