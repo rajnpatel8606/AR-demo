@@ -57,7 +57,7 @@
       --poster-color: transparent;
     }
 
-    /* Hide default AR button - we'll use custom one */
+    /* Hide default AR button */
     model-viewer::part(default-ar-button) {
       display: none;
     }
@@ -82,7 +82,6 @@
 
     .ar-button:hover {
       transform: translateY(-2px);
-      box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
     }
 
     .ar-button:active {
@@ -94,16 +93,20 @@
       height: 24px;
     }
 
-    .ar-not-supported {
-      display: none;
-      background: #ff6b6b;
+    .status-message {
       color: white;
       padding: 16px 24px;
       border-radius: 12px;
-      margin: 20px;
+      margin: 10px 20px;
       text-align: center;
       font-size: 14px;
+      max-width: 90%;
     }
+
+    .status-message.error { background: #e74c3c; }
+    .status-message.warning { background: #f39c12; }
+    .status-message.info { background: #3498db; }
+    .status-message.success { background: #27ae60; }
 
     .instructions {
       color: rgba(255,255,255,0.6);
@@ -112,14 +115,20 @@
       padding: 0 20px 20px;
     }
 
-    /* Hotspot for annotations (optional) */
-    .hotspot {
-      background: white;
-      border-radius: 20px;
-      padding: 8px 12px;
+    .debug-info {
+      background: rgba(0,0,0,0.7);
+      color: #0f0;
+      font-family: monospace;
       font-size: 12px;
-      font-weight: 600;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      padding: 15px;
+      margin: 10px 20px;
+      border-radius: 8px;
+      max-width: 90%;
+      line-height: 1.6;
+    }
+
+    .debug-info .label {
+      color: #888;
     }
   </style>
 </head>
@@ -136,7 +145,7 @@
       id="viewer"
       src="food.glb"
       ar
-      ar-modes="scene-viewer webxr quick-look"
+      ar-modes="webxr scene-viewer quick-look"
       camera-controls
       auto-rotate
       shadow-intensity="1"
@@ -157,34 +166,142 @@
     View in Your Space
   </button>
 
-  <div class="ar-not-supported" id="arNotSupported">
-    📱 Open this page on your phone to view in AR!
-  </div>
+  <div id="statusMessage" class="status-message info" style="display:none;"></div>
 
   <p class="instructions">
     Point your camera at a flat surface to place the model
   </p>
 
+  <!-- Debug Panel - tells us what's happening -->
+  <div class="debug-info" id="debugInfo">
+    ⏳ Loading...
+  </div>
+
   <script>
     const modelViewer = document.getElementById('viewer');
     const arButton = document.getElementById('arButton');
-    const arNotSupported = document.getElementById('arNotSupported');
+    const statusMessage = document.getElementById('statusMessage');
+    const debugInfo = document.getElementById('debugInfo');
 
-    // Check AR support
+    function showStatus(message, type = 'info') {
+      statusMessage.textContent = message;
+      statusMessage.className = 'status-message ' + type;
+      statusMessage.style.display = 'block';
+    }
+
+    function getDeviceInfo() {
+      const ua = navigator.userAgent;
+      if (/iPhone|iPad|iPod/.test(ua)) return 'iOS';
+      if (/Android/.test(ua)) return 'Android';
+      return 'Desktop/Other';
+    }
+
+    function getBrowserInfo() {
+      const ua = navigator.userAgent;
+      if (/CriOS/.test(ua)) return 'Chrome on iOS';
+      if (/FxiOS/.test(ua)) return 'Firefox on iOS';
+      if (/Safari/.test(ua) && !/Chrome/.test(ua)) return 'Safari';
+      if (/Chrome/.test(ua)) return 'Chrome';
+      if (/Firefox/.test(ua)) return 'Firefox';
+      return 'Unknown';
+    }
+
+    function updateDebug(extra = '') {
+      const device = getDeviceInfo();
+      const browser = getBrowserInfo();
+      const arSupport = modelViewer.canActivateAR;
+      const isHTTPS = location.protocol === 'https:';
+      const modelLoaded = modelViewer.loaded;
+
+      let html = `
+        <div><span class="label">Protocol:</span> ${isHTTPS ? '✅ HTTPS' : '❌ HTTP (AR needs HTTPS!)'}</div>
+        <div><span class="label">Device:</span> ${device}</div>
+        <div><span class="label">Browser:</span> ${browser}</div>
+        <div><span class="label">Model:</span> ${modelLoaded ? '✅ Loaded' : '⏳ Loading...'}</div>
+        <div><span class="label">AR Support:</span> ${arSupport ? '✅ Yes' : '❌ No'}</div>
+      `;
+
+      // Device-specific tips
+      if (device === 'iOS' && browser === 'Chrome on iOS') {
+        html += `<div style="color:#ffa502;">⚠️ Use Safari for AR on iPhone!</div>`;
+      }
+      if (device === 'Android' && browser !== 'Chrome') {
+        html += `<div style="color:#ffa502;">⚠️ Use Chrome for AR on Android!</div>`;
+      }
+      if (!isHTTPS) {
+        html += `<div style="color:#ff6b6b;">❌ AR requires HTTPS!</div>`;
+      }
+
+      if (extra) {
+        html += `<div style="color:#ff6b6b; margin-top:8px;">${extra}</div>`;
+      }
+
+      debugInfo.innerHTML = html;
+    }
+
+    // When model loads
     modelViewer.addEventListener('load', () => {
-      if (modelViewer.canActivateAR) {
-        arButton.style.display = 'flex';
-        arNotSupported.style.display = 'none';
-      } else {
-        arButton.style.display = 'none';
-        arNotSupported.style.display = 'block';
+      console.log('Model loaded');
+      updateDebug();
+    });
+
+    // AR status changes
+    modelViewer.addEventListener('ar-status', (event) => {
+      const status = event.detail.status;
+      console.log('AR Status:', status);
+      
+      if (status === 'failed') {
+        showStatus('❌ AR failed. Check camera permissions & pop-up blocker.', 'error');
+        updateDebug('AR Status: FAILED');
+      } else if (status === 'session-started') {
+        showStatus('✅ AR Started!', 'success');
+      } else if (status === 'not-presenting') {
+        updateDebug('AR Status: Not presenting');
       }
     });
 
-    // Custom AR button click
-    arButton.addEventListener('click', () => {
-      modelViewer.activateAR();
+    // Model errors
+    modelViewer.addEventListener('error', (event) => {
+      console.error('Error:', event);
+      showStatus('❌ Error loading model', 'error');
+      updateDebug('Model Error: ' + (event.detail?.message || 'Unknown'));
     });
+
+    // AR Button click
+    arButton.addEventListener('click', () => {
+      updateDebug();
+      
+      if (!modelViewer.canActivateAR) {
+        const device = getDeviceInfo();
+        const browser = getBrowserInfo();
+        
+        let msg = 'AR not available. ';
+        if (device === 'iOS' && browser !== 'Safari') {
+          msg += 'Please open in Safari.';
+        } else if (device === 'Android' && browser !== 'Chrome') {
+          msg += 'Please open in Chrome.';
+        } else if (device === 'Desktop/Other') {
+          msg += 'Open this page on your phone.';
+        } else {
+          msg += 'Check browser permissions.';
+        }
+        
+        showStatus(msg, 'warning');
+        return;
+      }
+      
+      showStatus('Opening AR... Allow camera if prompted.', 'info');
+      
+      try {
+        modelViewer.activateAR();
+      } catch (e) {
+        showStatus('❌ ' + e.message, 'error');
+        updateDebug('Error: ' + e.message);
+      }
+    });
+
+    // Initial check after short delay
+    setTimeout(updateDebug, 1500);
   </script>
 
 </body>
