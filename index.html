@@ -7,39 +7,101 @@
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 
   <style>
-    body {
+    * {
       margin: 0;
-      background: #111;
-      font-family: Arial, sans-serif;
+      padding: 0;
+      box-sizing: border-box;
     }
 
-    model-viewer {
-      width: 100vw;
+    body {
+      background: #000;
+      font-family: Arial, sans-serif;
+      min-height: 100vh;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
       height: 100vh;
     }
 
-    /* Style the default AR button */
+    model-viewer {
+      width: 100%;
+      flex: 1;
+    }
+
+    /* Hide default button - we use custom */
     model-viewer::part(default-ar-button) {
+      display: none;
+    }
+
+    .bottom-section {
+      background: #111;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .ar-btn {
       background: #ff6b35;
-      border-radius: 50px;
-      padding: 16px 24px;
-      font-size: 16px;
+      color: white;
+      border: none;
+      padding: 18px 40px;
+      font-size: 18px;
       font-weight: bold;
+      border-radius: 50px;
+      width: 100%;
+      max-width: 300px;
+    }
+
+    .debug {
+      color: #666;
+      font-size: 12px;
+      margin-top: 15px;
     }
   </style>
 </head>
 
 <body>
 
-  <model-viewer
-    src="https://modelviewer.dev/shared-assets/models/Astronaut.glb"
-    ar
-    ar-modes="scene-viewer webxr quick-look"
-    camera-controls
-    auto-rotate
-    shadow-intensity="1"
-  >
-  </model-viewer>
+  <div class="container">
+    <model-viewer
+      id="viewer"
+      src="https://modelviewer.dev/shared-assets/models/Astronaut.glb"
+      ar
+      ar-modes="scene-viewer webxr quick-look"
+      camera-controls
+      auto-rotate
+      shadow-intensity="1"
+    >
+    </model-viewer>
+
+    <div class="bottom-section">
+      <button class="ar-btn" id="arBtn">👆 View in Your Space</button>
+      <div class="debug" id="debug">Loading...</div>
+    </div>
+  </div>
+
+  <script>
+    const viewer = document.getElementById('viewer');
+    const btn = document.getElementById('arBtn');
+    const debug = document.getElementById('debug');
+
+    viewer.addEventListener('load', () => {
+      debug.textContent = 'Model loaded ✓ | AR: ' + (viewer.canActivateAR ? 'Yes ✓' : 'No ✗');
+    });
+
+    viewer.addEventListener('error', () => {
+      debug.textContent = 'Error loading model!';
+    });
+
+    btn.addEventListener('click', () => {
+      if (viewer.canActivateAR) {
+        viewer.activateAR();
+      } else {
+        alert('AR not available. Use Chrome browser.');
+      }
+    });
+  </script>
 
 </body>
 </html>
