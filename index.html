@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>AR Food Demo</title>
+  <title>AR Demo</title>
 
+  <!-- Model Viewer -->
   <script type="module"
     src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
   </script>
@@ -11,7 +12,9 @@
   <style>
     body {
       margin: 0;
+      overflow: hidden;
       font-family: Arial, sans-serif;
+      background: white;
     }
 
     model-viewer {
@@ -19,20 +22,14 @@
       height: 100vh;
     }
 
-    /* BIG AR BUTTON */
-    #ar-button {
-      position: absolute;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      padding: 16px 28px;
+    /* BIG CLEAR AR BUTTON */
+    model-viewer::part(ar-button) {
       background: black;
       color: white;
+      padding: 16px 28px;
       font-size: 18px;
       border-radius: 12px;
       border: none;
-      cursor: pointer;
-      z-index: 10;
     }
   </style>
 </head>
@@ -44,22 +41,12 @@
   ar
   ar-modes="scene-viewer webxr quick-look"
   camera-controls
-  ar-placement="floor"
-  ar-scale="fixed"
-  style="width:100vw; height:100vh;">
+  auto-rotate
+  shadow-intensity="1"
+  environment-image="neutral"
+  exposure="1"
+>
 </model-viewer>
-
-<style>
-/* Enlarge the default AR button */
-model-viewer::part(ar-button) {
-  width: auto;
-  height: auto;
-  padding: 16px 28px;
-  font-size: 18px;
-  border-radius: 12px;
-}
-</style>
-
 
 </body>
 </html>
