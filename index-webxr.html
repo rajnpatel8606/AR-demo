@@ -56,18 +56,17 @@
 
   <div class="title">🍔 AR Demo</div>
 
- <model-viewer
+<model-viewer
   src="food.glb"
   ar
-  ar-modes="scene-viewer webxr quick-look"
-  ar-scale="auto"
-  ar-placement="floor"
+  ar-modes="webxr scene-viewer quick-look"
+  ar-scale="fixed"
+  scale="1 1 1"
+  ar-placement="auto"
   camera-controls
-  interaction-prompt="auto"
-  shadow-intensity="2"
-  shadow-softness="0.8"
-  exposure="1.9"
-  environment-image="neutral"
+  xr-environment
+  auto-rotate
+  rotation-per-second="10deg"
 >
 
     <div slot="ar-prompt" style="
