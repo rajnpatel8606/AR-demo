@@ -6,27 +6,131 @@
   <title>AR Menu</title>
   <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.3.0/model-viewer.min.js"></script>
   <style>
-    *{margin:0;padding:0;box-sizing:border-box}
-    html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:#fff}
-    model-viewer{width:100%;height:100%;background:#fff;--poster-color:transparent}
-    model-viewer::part(default-ar-button){display:none}
-    .ar-button{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(135deg,#2d2d2d 0%,#1a1a1a 100%);color:#fff;border:none;padding:18px 36px;font-size:17px;font-weight:600;letter-spacing:.3px;border-radius:100px;cursor:pointer;box-shadow:0 8px 32px rgba(0,0,0,.25),0 2px 8px rgba(0,0,0,.15);transition:transform .2s ease,box-shadow .2s ease;z-index:100;-webkit-tap-highlight-color:transparent}
-    .ar-button:hover{transform:translateX(-50%) translateY(-2px);box-shadow:0 12px 40px rgba(0,0,0,.3),0 4px 12px rgba(0,0,0,.2)}
-    .ar-button:active{transform:translateX(-50%) scale(.98)}
-    .ar-button svg{width:22px;height:22px;flex-shrink:0}
-    .ar-button[hidden]{display:none}
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: #ffffff;
+    }
+
+    model-viewer {
+      width: 100%;
+      height: 100%;
+      background: #ffffff;
+      --poster-color: transparent;
+    }
+
+    model-viewer::part(default-ar-button) {
+      display: none;
+    }
+
+    .ar-button {
+      position: absolute;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
+      color: #ffffff;
+      border: none;
+      padding: 20px 40px;
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      border-radius: 100px;
+      cursor: pointer;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.2);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      z-index: 100;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .ar-button:active {
+      transform: translateX(-50%) scale(0.97);
+    }
+
+    .ar-button svg {
+      width: 24px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+
+    .ar-button[hidden] {
+      display: none;
+    }
+
+    .ar-prompt {
+      position: absolute;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.75);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 50px;
+      font-size: 14px;
+      font-weight: 500;
+      white-space: nowrap;
+      pointer-events: none;
+    }
   </style>
 </head>
 <body>
-  <model-viewer id="viewer" src="food.glb" ar ar-modes="scene-viewer webxr quick-look" ar-scale="auto" ar-placement="floor" camera-controls touch-action="pan-y" auto-rotate rotation-per-second="30deg" shadow-intensity="1" shadow-softness="1" exposure="1" environment-image="neutral" alt="3D Food Model"></model-viewer>
+
+  <model-viewer
+    id="viewer"
+    src="food.glb"
+    ar
+    ar-modes="webxr scene-viewer quick-look"
+    ar-scale="auto"
+    ar-placement="floor"
+    camera-controls
+    touch-action="pan-y"
+    auto-rotate
+    rotation-per-second="30deg"
+    shadow-intensity="1"
+    shadow-softness="1"
+    exposure="1.2"
+    environment-image="neutral"
+    alt="3D Food Model"
+    xr-environment
+  >
+    <div class="ar-prompt" slot="ar-prompt">
+      Tap to place • Drag to move
+    </div>
+  </model-viewer>
+
   <button class="ar-button" id="arButton">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+    <svg viewBox="0 0 24 24" fill="currentColor">
+      <path d="M3 4c0-.55.45-1 1-1h2V1H4C2.35 1 1 2.35 1 4v2h2V4zm0 16v-2H1v2c0 1.65 1.35 3 3 3h2v-2H4c-.55 0-1-.45-1-1zm18-16V4c0-.55-.45-1-1-1h-2V1h2c1.65 0 3 1.35 3 3v2h-2zm0 16c0 .55-.45 1-1 1h-2v2h2c1.65 0 3-1.35 3-3v-2h-2v2zM12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"/>
+    </svg>
     View in your space
   </button>
+
   <script>
-    const modelViewer=document.getElementById('viewer'),arButton=document.getElementById('arButton');
-    modelViewer.addEventListener('load',()=>{if(!modelViewer.canActivateAR)arButton.hidden=true});
-    arButton.addEventListener('click',()=>{modelViewer.activateAR()});
+    const modelViewer = document.getElementById('viewer');
+    const arButton = document.getElementById('arButton');
+
+    modelViewer.addEventListener('load', () => {
+      if (!modelViewer.canActivateAR) {
+        arButton.hidden = true;
+      }
+    });
+
+    arButton.addEventListener('click', () => {
+      modelViewer.activateAR();
+    });
   </script>
+
 </body>
 </html>
