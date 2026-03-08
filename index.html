@@ -37,7 +37,7 @@ height:60vh;
 background-color:#202020;
 }
 
-/* BIG AR BUTTON */
+/* AR BUTTON */
 
 model-viewer::part(default-ar-button){
 background-color:#ff6b35;
@@ -47,6 +47,21 @@ color:white;
 font-weight:bold;
 padding:20px 40px;
 font-size:18px;
+}
+
+/* Loading overlay */
+
+#loading{
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+color:white;
+font-size:16px;
+display:none;
+background:rgba(0,0,0,0.7);
+padding:12px 18px;
+border-radius:8px;
 }
 
 /* Carousel */
@@ -63,6 +78,7 @@ padding:15px 0;
 display:flex;
 justify-content:center;
 gap:10px;
+flex-wrap:wrap;
 }
 
 .slide{
@@ -78,6 +94,11 @@ font-size:14px;
 .slide.selected{
 border:2px solid #ff6b35;
 background:#333;
+}
+
+.slide:disabled{
+opacity:0.5;
+cursor:not-allowed;
 }
 
 .instructions{
@@ -117,6 +138,8 @@ xr-environment
 alt="3D Food Model"
 >
 
+<div id="loading">Loading model...</div>
+
 <div slot="ar-prompt" style="
 position:absolute;
 bottom:90px;
@@ -148,14 +171,23 @@ Food
 </button>
 
 <button class="slide"
-onclick="switchModel(this,'Samosa.glb')">
+onclick="switchModel(this,'samosa.glb')">
 Samosa
+</button>
+
+<button class="slide"
+onclick="switchModel(this,'Orange.glb')">
+Orange
+</button>
+
+<button class="slide"
+onclick="switchModel(this,'Chicken.glb')">
+Chicken
 </button>
 
 </div>
 
 </div>
-
 
 <div class="instructions">
 Tap "View in AR" → Point at table → Tap to place → Drag to move
@@ -165,20 +197,40 @@ Tap "View in AR" → Point at table → Tap to place → Drag to move
 <script>
 
 const modelViewer = document.querySelector("#model");
+const loading = document.querySelector("#loading");
+const buttons = document.querySelectorAll(".slide");
 
 function switchModel(element,model){
 
+loading.style.display="block";
+
+/* disable buttons while loading */
+
+buttons.forEach(btn=>{
+btn.disabled=true;
+});
+
 modelViewer.src=model;
 
-const slides=document.querySelectorAll(".slide");
-
-slides.forEach((slide)=>{
+buttons.forEach((slide)=>{
 slide.classList.remove("selected");
 });
 
 element.classList.add("selected");
 
 }
+
+/* When model finishes loading */
+
+modelViewer.addEventListener("load",()=>{
+
+loading.style.display="none";
+
+buttons.forEach(btn=>{
+btn.disabled=false;
+});
+
+});
 
 /* Prevent carousel touches from affecting AR */
 
